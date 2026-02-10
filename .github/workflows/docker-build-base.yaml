@@ -1,4 +1,4 @@
-name: docker-build-base #Draft2
+name: docker-build-base
 
 on:
   push:
@@ -11,14 +11,11 @@ on:
 
 jobs:
   main:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -30,11 +27,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push base image
+      - name: Build base image (push only on upstream)
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./autonomy_core/base/Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: ${{ github.repository == 'kumarrobotics/kr_autonomous_flight' }}
           tags: kumarrobotics/autonomy:base
